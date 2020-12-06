@@ -15,6 +15,9 @@ from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
 from private_ingest.utils.location_fix import add_location_fix
 from dw_storage.utils.bq_utils import upload_results_to_bq
+from datetime import datetime
+from django.conf import settings
+from pathlib import Path
 
 
 class PrivateSourceIngestView(views.APIView):
@@ -33,7 +36,14 @@ class PrivateSourceIngestView(views.APIView):
         """
         try:
             filename = request.FILES['data_file'].temporary_file_path()
-            df = dd.read_csv(filename)
+            df = dd.read_csv(
+                filename,
+                dtype={
+                    "trip_id": str,
+                    "latitude": float,
+                    "longitude": float
+                }
+            )
             df = df.drop_duplicates()
             df['location_fix'] = df.apply(
                 func=add_location_fix,
@@ -78,7 +88,21 @@ class PrivateSourceIngestView(views.APIView):
         """
         try:
             upload_results_to_bq(df)
+
         except Exception as e:
-            pass
+            """
+            Store both the processed dataframe and the original csv file for
+            manual review and correction
+            """
+            filename = datetime.now().strftime('%d-%m-%Y_%H%M%S') + '.parquet'
+            filepath = Path(settings.FAILED_UPLOADS_DIR) / filename
+            df.to_parquet(filepath, engine='pyarrow')
+
+            filename = datetime.now().strftime('%d-%m-%Y_%H%M%S') + '.csv'
+            filepath = Path(settings.FAILED_UPLOADS_DIR) / filename
+            data_file = request.data.get('data_file')
+            with open(filepath, 'wb+') as destination:
+                for chunk in data_file.chunks():
+                    destination.write(chunk)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
