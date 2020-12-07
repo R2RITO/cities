@@ -111,6 +111,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OpenApi swagger settings
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'cities.urls.schema_info',
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+    },
+}
+
+LOG_FILE_PATH = os.environ.get('LOG_FILE_PATH')
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_FILE_PATH, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

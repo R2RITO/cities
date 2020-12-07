@@ -18,15 +18,23 @@ from dw_storage.utils.bq_utils import upload_private_source_results_to_bq
 from datetime import datetime
 from django.conf import settings
 from pathlib import Path
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class PrivateSourceIngestView(views.APIView):
 
     @swagger_auto_schema(
         request_body=PrivateSourceIngestSerializer,
-        responses={204: None}
+        responses={204: "Succesfully uploaded data"}
     )
     def post(self, request, **kwargs):
+        """
+        Parse the uploaded CSV file, retrieve the location fix of the
+        coordinates and upload the results to the data warehouse in BigQuery
+        """
         serializer = PrivateSourceIngestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -69,14 +77,16 @@ class PrivateSourceIngestView(views.APIView):
 
         except ValueError as e:
             data = {
-                'message': e
+                'message': "Error decoding CSV file"
             }
+            logger.error(str(e))
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         except (HTTPError, ConnectionError) as e:
             data = {
-                'message': e
+                'message': "Error processing CSV data"
             }
+            logger.error(str(e))
             return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -95,6 +105,8 @@ class PrivateSourceIngestView(views.APIView):
             Store both the processed dataframe and the original csv file for
             manual review and correction
             """
+            logger.error(str(e))
+
             filename = datetime.now().strftime('%d-%m-%Y_%H%M%S') + '.parquet'
             filepath = Path(settings.FAILED_UPLOADS_DIR) / filename
             df.to_parquet(filepath, engine='pyarrow')
@@ -105,6 +117,10 @@ class PrivateSourceIngestView(views.APIView):
             with open(filepath, 'wb+') as destination:
                 for chunk in data_file.chunks():
                     destination.write(chunk)
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            data = {
+                'message': "Error uploading processed CSV data"
+            }
+            return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_204_NO_CONTENT)

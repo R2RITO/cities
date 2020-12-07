@@ -8,18 +8,22 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from google.cloud import bigquery
 from django.conf import settings
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class ChicagoDatasetIngestView(views.APIView):
 
     @swagger_auto_schema(
         request_body=None,
-        responses={204: None}
+        responses={204: "Succesfully uploaded data"}
     )
     def post(self, request, **kwargs):
         """
         Query the public dataset, and upload retrieved data to the data
-        warehouse on bq
+        warehouse on BigQuery
         """
         try:
             client = bigquery.Client()
@@ -45,8 +49,9 @@ class ChicagoDatasetIngestView(views.APIView):
 
         except Exception as e:
             data = {
-                'message': e
+                'message': "Error retrieving/uploading public data"
             }
+            logger.error(str(e))
             return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
