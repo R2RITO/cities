@@ -23,7 +23,7 @@ def upload_results_to_bq(df):
     ])
 
     job = client.load_table_from_dataframe(
-        df, table_id, job_config=job_config
+        df.compute(), table_id, job_config=job_config
     )
 
     # Wait for the load job to complete.
