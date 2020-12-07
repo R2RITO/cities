@@ -13,6 +13,15 @@ def upload_private_source_results_to_bq(df, table):
     return upload_results_to_bq(df, table, job_config)
 
 
+def upload_chicago_dataset_results_to_bq(df, table):
+    job_config = bigquery.LoadJobConfig(schema=[
+        bigquery.SchemaField("pickup_location_fix", "STRING"),
+        bigquery.SchemaField("dropoff_location_fix", "STRING"),
+    ])
+
+    return upload_results_to_bq(df, table, job_config)
+
+
 def upload_results_to_bq(df, table, job_config=None):
     """
     Function that takes a dataframe containing data for the taxi_trips_details
