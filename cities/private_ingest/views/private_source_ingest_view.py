@@ -14,7 +14,7 @@ from dask import dataframe as dd
 from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
 from private_ingest.utils.location_fix import add_location_fix
-from dw_storage.utils.bq_utils import upload_results_to_bq
+from dw_storage.utils.bq_utils import upload_private_source_results_to_bq
 from datetime import datetime
 from django.conf import settings
 from pathlib import Path
@@ -26,7 +26,7 @@ class PrivateSourceIngestView(views.APIView):
         request_body=PrivateSourceIngestSerializer,
         responses={204: None}
     )
-    def post(self, request, format=None):
+    def post(self, request, **kwargs):
         serializer = PrivateSourceIngestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -87,7 +87,8 @@ class PrivateSourceIngestView(views.APIView):
         when the service is available.
         """
         try:
-            upload_results_to_bq(df)
+            table = settings.TAXI_TRIPS_DETAILS_TABLE
+            upload_private_source_results_to_bq(df.compute(), table)
 
         except Exception as e:
             """
@@ -104,5 +105,6 @@ class PrivateSourceIngestView(views.APIView):
             with open(filepath, 'wb+') as destination:
                 for chunk in data_file.chunks():
                     destination.write(chunk)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
