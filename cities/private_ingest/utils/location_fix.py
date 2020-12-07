@@ -39,3 +39,9 @@ def add_location_fix(row):
     return get_location_fix_by_coordinates(
         row['latitude'], row['longitude']
     )
+
+
+def add_custom_location_fix(row, column_name):
+    return get_location_fix_by_coordinates(
+        row[column_name + '_latitude'], row[column_name + '_longitude']
+    )

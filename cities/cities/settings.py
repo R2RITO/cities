@@ -111,6 +111,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OpenApi swagger settings
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'cities.urls.schema_info',
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+    },
+}
+
+LOG_FILE_PATH = os.environ.get('LOG_FILE_PATH')
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_FILE_PATH, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -132,4 +163,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TAXI_TRIPS_DETAILS_TABLE = os.environ.get('TAXI_TRIPS_DETAILS_TABLE')
+TAXI_TRIPS_TABLE = os.environ.get('TAXI_TRIPS_TABLE')
 FAILED_UPLOADS_DIR = os.environ.get('FAILED_UPLOADS_DIR')
+GOOGLE_CLOUD_PROJECT = os.environ.get('GOOGLE_CLOUD_PROJECT')

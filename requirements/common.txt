@@ -4,3 +4,5 @@ drf-yasg==1.20.0
 google-cloud-bigquery==2.5.0
 pyarrow==2.0.0
 dask==2.30.0
+google-cloud-bigquery-storage==2.1.0
+cython==0.29.21
