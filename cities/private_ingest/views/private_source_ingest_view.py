@@ -49,8 +49,10 @@ class PrivateSourceIngestView(views.APIView):
                 dtype={
                     "trip_id": str,
                     "latitude": float,
-                    "longitude": float
-                }
+                    "longitude": float,
+                    "timestamp": str,
+                },
+                parse_dates=['timestamp']
             )
             df = df.drop_duplicates()
             df['location_fix'] = df.apply(

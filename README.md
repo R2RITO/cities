@@ -27,6 +27,7 @@ Set up the environment variables
     GOOGLE_APPLICATION_CREDENTIALS
     GOOGLE_CLOUD_PROJECT
     TAXI_TRIPS_DETAILS_TABLE
+    TAXI_TRIPS_INGESTED_DETAILS_TABLE
     TAXI_TRIPS_TABLE
     FAILED_UPLOADS_DIR
     
@@ -37,6 +38,7 @@ Example:
     export GOOGLE_APPLICATION_CREDENTIALS='/home/fulanito/Projects/cities/project_creds.json'
     export GOOGLE_CLOUD_PROJECT='project_id'
     export TAXI_TRIPS_DETAILS_TABLE='cities.taxi_trips_details'
+    export TAXI_TRIPS_INGESTED_DETAILS_TABLE='cities.taxi_trips_ingested_details'
     export TAXI_TRIPS_TABLE='cities.taxi_trips'
     export FAILED_UPLOADS_DIR='/home/fulanito/Projects/cities/failed_uploads'
 

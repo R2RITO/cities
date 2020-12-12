@@ -20,6 +20,9 @@ def get_location_fix_by_coordinates(latitude, longitude):
     :raises HTTPError: on error fetching the location
     """
 
+    if not (latitude and longitude):
+        return ''
+
     params = {
         'format': 'json',
         'lat': latitude,
