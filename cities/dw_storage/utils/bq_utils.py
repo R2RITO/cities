@@ -8,6 +8,7 @@ from google.cloud import bigquery
 def upload_private_source_results_to_bq(df, table):
     job_config = bigquery.LoadJobConfig(schema=[
         bigquery.SchemaField("location_fix", "STRING"),
+        bigquery.SchemaField("timestamp", "TIMESTAMP"),
     ])
 
     return upload_results_to_bq(df, table, job_config)

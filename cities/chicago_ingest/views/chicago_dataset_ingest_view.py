@@ -43,12 +43,7 @@ class ChicagoDatasetIngestView(views.APIView):
                 dropoff_latitude,
                 dropoff_longitude
                 FROM `bigquery-public-data.chicago_taxi_trips.taxi_trips`
-                WHERE 
-                pickup_latitude is not null AND
-                pickup_longitude is not null AND
-                dropoff_latitude is not null AND
-                dropoff_longitude is not null
-                LIMIT 5
+                LIMIT 10
             """
             query_job = client.query(sql)
             df = query_job.to_dataframe()
