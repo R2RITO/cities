@@ -5,6 +5,19 @@
 This is a showcase project, used to retrieve data from two different sources
 and upload it to GCP's BigQuery service
 
+It provides three different resources through an API:
+
+1. A resource used to query the public taxi trips database and fetch some data 
+into the private datastore, in order to mock the customer's data warehouse
+
+2. A resource used to upload a csv file having GPS data of the taxis. 
+This is used to mock the external private data, and saves the processed data
+on the private data store
+
+3. A resource used to create a relationship between the two previous data
+stores based on the timestamp of the trip. This way, the GPS data can be linked
+to a trip and used to obtain better information about the data.
+
 
 # Setup
 
